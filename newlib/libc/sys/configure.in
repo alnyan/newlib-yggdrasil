@@ -5,7 +5,7 @@ AC_PREREQ(2.59)
 AC_INIT([newlib],[NEWLIB_VERSION])
 AC_CONFIG_SRCDIR([a29khif])
 
-dnl Can't be done in NEWLIB_CONFIGURE because that confuses automake. 
+dnl Can't be done in NEWLIB_CONFIGURE because that confuses automake.
 AC_CONFIG_AUX_DIR(../../..)
 
 NEWLIB_CONFIGURE(../..)
@@ -22,6 +22,7 @@ fi
 
 if test -n "${sys_dir}"; then
   case ${sys_dir} in
+    yggdrasil) AC_CONFIG_SUBDIRS(yggdrasil) ;;
 	a29khif) AC_CONFIG_SUBDIRS(a29khif) ;;
 	arm) AC_CONFIG_SUBDIRS(arm) ;;
 	d10v) AC_CONFIG_SUBDIRS(d10v) ;;
