@@ -16,8 +16,15 @@ char **environ = NULL; /* pointer to array of char * strings that define the cur
 
 ////
 
-void _noopt ygg_debug_trace(const char *msg, uintptr_t v0, uintptr_t v1) {
-    (void) ASM_SYSCALL3(SYSCALL_NRX_TRACE, msg, v0, v1);
+void _noopt ygg_debug_trace(const char *msg, ...) {
+    uintptr_t argv[5];
+    va_list args;
+    va_start(args, msg);
+    for (size_t i = 0; i < 5; ++i) {
+        argv[i] = va_arg(args, uintptr_t);
+    }
+    va_end(args);
+    (void) ASM_SYSCALL6(SYSCALL_NRX_TRACE, msg, argv[0], argv[1], argv[2], argv[3], argv[4]);
 }
 void *_noopt mmap(void *addr, size_t len, int prot, int flags, int fd, off_t off) {
     intptr_t res = (intptr_t) ASM_SYSCALL6(SYSCALL_NR_MMAP, addr, len, prot, flags, fd, off);
@@ -62,6 +69,10 @@ int _noopt lseek(int file, int ptr, int dir) {
 }
 int _noopt stat(const char *file, struct stat *st) {
     return SET_ERRNO(int, ASM_SYSCALL2(SYSCALL_NR_STAT, file, st));
+}
+int _noopt fstat(int fd, struct stat *st) {
+    return -1;
+    return SET_ERRNO(int, ASM_SYSCALL2(SYSCALL_NR_FSTAT, fd, st));
 }
 int _noopt unlink(char *name) {
     return SET_ERRNO(int, ASM_SYSCALL1(SYSCALL_NR_UNLINK, name));
@@ -160,10 +171,6 @@ int _noopt umount(const char *dir) {
 // Not implemented yet:
 
 int _noopt link(char *old, char *new) {
-    // TODO
-    return -1;
-}
-int _noopt fstat(int file, struct stat *st) {
     // TODO
     return -1;
 }

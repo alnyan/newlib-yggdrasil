@@ -1,11 +1,11 @@
 //#include <bits/syscall.h>
+#include <ygg/signum.h>
 #include <ygg/syscall.h>
 #include <signal.h>
 #include <stdio.h>
 
 #include "syscalls.h"
-
-typedef _sig_func_ptr sighandler_t;
+#include "debug.h"
 
 static void __attribute__((optimize("O0"))) __kernel_sigentry(uintptr_t addr) {
     (void) ASM_SYSCALL1(SYSCALL_NRX_SIGENTRY, addr);
@@ -26,7 +26,19 @@ static sighandler_t signal_handlers[16] = {0};
 static sighandler_t user_handlers[2] = {0};
 
 void __SIG_IGN(int signum) {
-    printf("Ignored: %d\n", signum);
+    if (signum < 16 && signal_messages[signum - 1]) {
+        printf("Ignored: %s\n", signal_messages[signum - 1]);
+    } else switch (signum) {
+    case SIGUSR1:
+        printf("Ignored: user signal 1\n");
+        break;
+    case SIGUSR2:
+        printf("Ignored: user signal 2\n");
+        break;
+    default:
+        printf("Ignored: %d\n", signum);
+        break;
+    }
 }
 
 void __SIG_DFL(int signum) {
@@ -63,7 +75,7 @@ void __libc_signal_init(void) {
     for (size_t i = 0; i < 16; ++i) {
         signal_handlers[i] = __SIG_DFL;
     }
-    user_handlers[0] = __SIG_IGN;
+    user_handlers[0] = __libc_debug_trigger;
     user_handlers[1] = __SIG_IGN;
 
     __kernel_sigentry((uintptr_t) __libc_signal_handle);

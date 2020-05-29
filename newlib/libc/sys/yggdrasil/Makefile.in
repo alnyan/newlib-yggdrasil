@@ -53,7 +53,7 @@ ARFLAGS = cru
 lib_a_AR = $(AR) $(ARFLAGS)
 @MAY_SUPPLY_SYSCALLS_TRUE@am__DEPENDENCIES_1 = syscalls.o signal.o \
 @MAY_SUPPLY_SYSCALLS_TRUE@	utsname.o pwd.o io2.o setjmp.o \
-@MAY_SUPPLY_SYSCALLS_TRUE@	malloc.o
+@MAY_SUPPLY_SYSCALLS_TRUE@	malloc.o debug.o
 am_lib_a_OBJECTS =
 lib_a_OBJECTS = $(am_lib_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -182,7 +182,8 @@ noinst_LIBRARIES = lib.a
 @MAY_SUPPLY_SYSCALLS_TRUE@			 pwd.o \
 @MAY_SUPPLY_SYSCALLS_TRUE@			 io2.o \
 @MAY_SUPPLY_SYSCALLS_TRUE@			 setjmp.o \
-@MAY_SUPPLY_SYSCALLS_TRUE@			 malloc.o
+@MAY_SUPPLY_SYSCALLS_TRUE@			 malloc.o \
+@MAY_SUPPLY_SYSCALLS_TRUE@			 debug.o
 
 lib_a_SOURCES = 
 lib_a_LIBADD = $(extra_objs)
@@ -193,6 +194,7 @@ EXTRA_lib_a_SOURCES = syscalls.c \
 					  io2.c \
 					  malloc.c \
 					  setjmp.S \
+					  debug.c \
 					  crt0.c
 
 lib_a_DEPENDENCIES = $(extra_objs)
@@ -305,6 +307,12 @@ lib_a-malloc.o: malloc.c
 
 lib_a-malloc.obj: malloc.c
 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-malloc.obj `if test -f 'malloc.c'; then $(CYGPATH_W) 'malloc.c'; else $(CYGPATH_W) '$(srcdir)/malloc.c'; fi`
+
+lib_a-debug.o: debug.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-debug.o `test -f 'debug.c' || echo '$(srcdir)/'`debug.c
+
+lib_a-debug.obj: debug.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-debug.obj `if test -f 'debug.c'; then $(CYGPATH_W) 'debug.c'; else $(CYGPATH_W) '$(srcdir)/debug.c'; fi`
 
 lib_a-crt0.o: crt0.c
 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-crt0.o `test -f 'crt0.c' || echo '$(srcdir)/'`crt0.c

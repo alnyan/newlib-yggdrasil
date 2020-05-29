@@ -11,7 +11,8 @@ extra_objs = syscalls.o \
 			 pwd.o \
 			 io2.o \
 			 setjmp.o \
-			 malloc.o
+			 malloc.o \
+			 debug.o
 else
 extra_objs =
 endif
@@ -25,6 +26,7 @@ EXTRA_lib_a_SOURCES = syscalls.c \
 					  io2.c \
 					  malloc.c \
 					  setjmp.S \
+					  debug.c \
 					  crt0.c
 lib_a_DEPENDENCIES = $(extra_objs)
 lib_a_CCASFLAGS = $(AM_CCASFLAGS)

@@ -101,4 +101,4 @@
 
 #define _noopt __attribute__((optimize("O0")))
 
-extern _noopt void ygg_debug_trace(const char *msg, uintptr_t v0, uintptr_t v1);
+extern _noopt void ygg_debug_trace(const char *fmt, ...);
