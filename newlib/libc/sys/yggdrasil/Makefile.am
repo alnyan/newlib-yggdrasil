@@ -12,6 +12,7 @@ extra_objs = syscalls.o \
 			 io2.o \
 			 setjmp.o \
 			 malloc.o \
+			 network.o \
 			 debug.o
 else
 extra_objs =
@@ -27,6 +28,7 @@ EXTRA_lib_a_SOURCES = syscalls.c \
 					  malloc.c \
 					  setjmp.S \
 					  debug.c \
+					  network.c \
 					  crt0.c
 lib_a_DEPENDENCIES = $(extra_objs)
 lib_a_CCASFLAGS = $(AM_CCASFLAGS)

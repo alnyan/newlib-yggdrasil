@@ -42,6 +42,9 @@ int _noopt munmap(void *addr, size_t len) {
 
 ////
 
+int _noopt select(int nfds, fd_set *rfds, fd_set *wfds, fd_set *xfds, struct timeval *tv) {
+    return SET_ERRNO(int, ASM_SYSCALL5(SYSCALL_NR_SELECT, nfds, rfds, wfds, xfds, tv));
+}
 int _noopt open(const char *name, int flags, ...) {
     va_list args;
     int mode;
@@ -161,11 +164,20 @@ uid_t _noopt getuid(void) {
 
 ////
 
+int _noopt reboot(int magic1, int magic2, unsigned int cmd, void *arg) {
+    return SET_ERRNO(int, ASM_SYSCALL4(SYSCALL_NR_REBOOT, magic1, magic2, cmd, arg));
+}
 int _noopt mount(const char *src, const char *dst, const char *fs, unsigned long flags, void *data) {
     return SET_ERRNO(int, ASM_SYSCALL5(SYSCALL_NR_MOUNT, src, dst, fs, flags, data));
 }
 int _noopt umount(const char *dir) {
     return SET_ERRNO(int, ASM_SYSCALL1(SYSCALL_NRX_UMOUNT, dir));
+}
+
+////
+
+int _noopt netctl(const char *iface, uint32_t cmd, void *arg) {
+    return SET_ERRNO(int, ASM_SYSCALL3(SYSCALL_NRX_NETCTL, iface, cmd, arg));
 }
 
 // Not implemented yet:
