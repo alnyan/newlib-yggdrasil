@@ -12,8 +12,6 @@
 
 #include "syscalls.h"
 
-char **environ = NULL; /* pointer to array of char * strings that define the current environment variables */
-
 ////
 
 void _noopt ygg_debug_trace(const char *msg, ...) {
