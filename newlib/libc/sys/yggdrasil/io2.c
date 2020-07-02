@@ -9,32 +9,32 @@
 #include <ygg/syscall.h>
 #include "syscalls.h"
 
-ssize_t gets_safe(int fd, char *buf, size_t lim) {
-    size_t c = 0;
-    char b;
-
-    while (1) {
-        if (c == lim - 1) {
-            return -1;
-        }
-
-        if (read(fd, &b, 1) != 1) {
-            if (!c) {
-                return -1;
-            }
-            break;
-        }
-
-        if (b == '\n') {
-            break;
-        }
-
-        buf[c++] = b;
-    }
-
-    buf[c] = 0;
-    return c;
-}
+//ssize_t gets_safe(int fd, char *buf, size_t lim) {
+//    size_t c = 0;
+//    char b;
+//
+//    while (1) {
+//        if (c == lim - 1) {
+//            return -1;
+//        }
+//
+//        if (read(fd, &b, 1) != 1) {
+//            if (!c) {
+//                return -1;
+//            }
+//            break;
+//        }
+//
+//        if (b == '\n') {
+//            break;
+//        }
+//
+//        buf[c++] = b;
+//    }
+//
+//    buf[c] = 0;
+//    return c;
+//}
 
 extern void *malloc(size_t count);
 extern void free(void *p);
@@ -107,4 +107,8 @@ int tcsetattr(int fd, int opt, const struct termios *tc) {
     default:
         return ioctl(fd, TCSETS, (void *) tc);
     }
+}
+
+int tcsetpgrp(int fd, int pgrp) {
+    ioctl(fd, TIOCSPGRP, &pgrp);
 }

@@ -90,6 +90,15 @@ int _noopt ioctl(int fd, unsigned int cmd, void *arg) {
 int _noopt access(const char *path, int mode) {
     return SET_ERRNO(int, ASM_SYSCALL2(SYSCALL_NR_ACCESS, path, mode));
 }
+int _noopt pipe(int *filedes) {
+    return SET_ERRNO(int, ASM_SYSCALL1(SYSCALL_NR_PIPE, filedes));
+}
+int _noopt dup(int from) {
+    return SET_ERRNO(int, ASM_SYSCALL1(SYSCALL_NR_DUP, from));
+}
+int _noopt dup2(int from, int to) {
+    return SET_ERRNO(int, ASM_SYSCALL2(SYSCALL_NR_DUP2, from, to));
+}
 int _noopt sync(void) {
     return SET_ERRNO(int, ASM_SYSCALL0(SYSCALL_NR_SYNC));
 }

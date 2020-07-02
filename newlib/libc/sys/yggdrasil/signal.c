@@ -15,36 +15,27 @@ static void __attribute__((optimize("O0"), noreturn)) __kernel_sigreturn(void) {
     while (1);
 }
 
-static const char *const signal_messages[16] = {
+static const char *const signal_messages[NSIG] = {
     [SIGKILL - 1] = "killed",
     [SIGINT - 1] = "interrupted",
     [SIGTERM - 1] = "terminated",
     [SIGSYS - 1] = "invalid system call",
     NULL
 };
-static sighandler_t signal_handlers[16] = {0};
-static sighandler_t user_handlers[2] = {0};
+static sighandler_t signal_handlers[NSIG] = {0};
 
 void __SIG_IGN(int signum) {
-    if (signum < 16 && signal_messages[signum - 1]) {
+    if (signum < 32 && signal_messages[signum - 1]) {
         printf("Ignored: %s\n", signal_messages[signum - 1]);
-    } else switch (signum) {
-    case SIGUSR1:
-        printf("Ignored: user signal 1\n");
-        break;
-    case SIGUSR2:
-        printf("Ignored: user signal 2\n");
-        break;
-    default:
-        printf("Ignored: %d\n", signum);
-        break;
+    } else {
+        printf("Ignored: signal %d\n", signum);
     }
 }
 
 void __SIG_DFL(int signum) {
     int pid = getpid();
 
-    if (!signum || signum > 16) {
+    if (!signum || signum >= 32) {
         printf("%d: invalid signal received: %d\n", pid, signum);
     } else {
         if (signal_messages[signum - 1]) {
@@ -58,11 +49,7 @@ void __SIG_DFL(int signum) {
 }
 
 static void __libc_signal_handle(int signum) {
-    if (signum == SIGUSR1) {
-        user_handlers[0](signum);
-    } else if (signum == SIGUSR2) {
-        user_handlers[1](signum);
-    } else if (signum >= 16) {
+    if (signum >= 32) {
         __SIG_DFL(signum);
     } else {
         signal_handlers[signum](signum);
@@ -72,11 +59,11 @@ static void __libc_signal_handle(int signum) {
 }
 
 void __libc_signal_init(void) {
-    for (size_t i = 0; i < 16; ++i) {
+    for (size_t i = 0; i < 32; ++i) {
         signal_handlers[i] = __SIG_DFL;
     }
-    user_handlers[0] = __libc_debug_trigger;
-    user_handlers[1] = __SIG_IGN;
+    signal_handlers[SIGUSR1] = __libc_debug_trigger;
+    signal_handlers[SIGUSR2] = __SIG_IGN;
 
     __kernel_sigentry((uintptr_t) __libc_signal_handle);
 }
@@ -92,12 +79,7 @@ sighandler_t signal(int signum, sighandler_t new_handler) {
         new_handler = __SIG_DFL;
     }
 
-    if (signum == SIGUSR1 || signum == SIGUSR2) {
-        int n = signum == SIGUSR2;
-        old_handler = user_handlers[n];
-        user_handlers[n] = new_handler;
-        return old_handler;
-    } else if (signum >= 16) {
+    if (signum >= 32) {
         printf("Fuck\n");
         exit(1);
     }
