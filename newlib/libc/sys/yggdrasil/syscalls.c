@@ -71,6 +71,9 @@ int _noopt lseek(int file, int ptr, int dir) {
 int _noopt stat(const char *file, struct stat *st) {
     return SET_ERRNO(int, ASM_SYSCALL2(SYSCALL_NR_STAT, file, st));
 }
+int _noopt lstat(const char *file, struct stat *st) {
+    return SET_ERRNO(int, ASM_SYSCALL2(SYSCALL_NR_LSTAT, file, st));
+}
 int _noopt fstat(int fd, struct stat *st) {
     return -1;
     return SET_ERRNO(int, ASM_SYSCALL2(SYSCALL_NR_FSTAT, fd, st));
