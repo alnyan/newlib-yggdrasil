@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <string.h>
 #include <errno.h>
+#include <stdio.h>
 
 #include "list.h"
 
@@ -190,7 +191,18 @@ void *_malloc_r(struct _reent *ree, size_t size) {
     } else if (size <= LARGE_ZONE_ELEM) {
         return alloc_from(&large_zone_list, LARGE_ZONE_SIZE, size);
     } else {
-        while (1);
+        size_t pages_needed = (size + 0xFFF) & ~0xFFF;
+        void *pages = mmap(NULL, pages_needed + 0x1000, 0, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+
+        if (pages == MAP_FAILED) {
+            return NULL;
+        }
+
+        struct block *block = pages + 0x1000 - sizeof(struct block);
+        block->flags = BLOCK_MAGIC | BLOCK_ALLOC | BLOCK_MMAP;
+        block->size = pages_needed;
+
+        return pages + 0x1000;
     }
 }
 
@@ -211,6 +223,15 @@ void _free_r(struct _reent *ree, void *ptr) {
     }
 
     __libc_validate_zones("pre-free\n");
+
+    if (block->flags & BLOCK_MMAP) {
+        void *base = (void *) ((uintptr_t) block & ~0xFFF);
+        size_t len = block->size + 0x1000;
+        ygg_debug_trace("munmap(%p, %u)\n", base, len);
+        munmap(base, len);
+        __libc_validate_zones("post-free\n");
+        return;
+    }
 
     block->flags &= ~BLOCK_ALLOC;
     struct block *prev, *next;
