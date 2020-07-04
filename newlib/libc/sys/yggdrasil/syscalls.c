@@ -171,6 +171,9 @@ int _noopt setuid(int uid) {
 uid_t _noopt getuid(void) {
     return ASM_SYSCALL0(SYSCALL_NR_GETUID);
 }
+gid_t _noopt getgid(void) {
+    return ASM_SYSCALL0(SYSCALL_NR_GETGID);
+}
 
 ////
 
