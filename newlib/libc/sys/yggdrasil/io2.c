@@ -9,32 +9,14 @@
 #include <ygg/syscall.h>
 #include "syscalls.h"
 
-//ssize_t gets_safe(int fd, char *buf, size_t lim) {
-//    size_t c = 0;
-//    char b;
-//
-//    while (1) {
-//        if (c == lim - 1) {
-//            return -1;
-//        }
-//
-//        if (read(fd, &b, 1) != 1) {
-//            if (!c) {
-//                return -1;
-//            }
-//            break;
-//        }
-//
-//        if (b == '\n') {
-//            break;
-//        }
-//
-//        buf[c++] = b;
-//    }
-//
-//    buf[c] = 0;
-//    return c;
-//}
+// TODO: move somewhere
+int usleep(unsigned long usec) {
+    struct timespec req = {
+        .tv_sec = usec / 1000000,
+        .tv_nsec = (usec % 1000000) * 1000
+    };
+    return nanosleep(&req, NULL);
+}
 
 extern void *malloc(size_t count);
 extern void free(void *p);
