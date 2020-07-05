@@ -114,6 +114,9 @@ int _noopt chmod(const char *path, mode_t mode) {
 int _noopt chdir(const char *dir) {
     return SET_ERRNO(int, ASM_SYSCALL1(SYSCALL_NR_CHDIR, dir));
 }
+int _noopt mknod(const char *filename, int mode, unsigned int dev) {
+    return SET_ERRNO(int, ASM_SYSCALL3(SYSCALL_NR_MKNOD, filename, mode, dev));
+}
 char *_noopt getcwd(char *buf, size_t lim) {
     if (SET_ERRNO(int, ASM_SYSCALL2(SYSCALL_NR_GETCWD, buf, lim)) == 0) {
         return buf;
@@ -185,6 +188,9 @@ int _noopt mount(const char *src, const char *dst, const char *fs, unsigned long
 }
 int _noopt umount(const char *dir) {
     return SET_ERRNO(int, ASM_SYSCALL1(SYSCALL_NRX_UMOUNT, dir));
+}
+int _noopt nanosleep(const struct timespec *req, struct timespec *rem) {
+    return SET_ERRNO(int, ASM_SYSCALL2(SYSCALL_NR_NANOSLEEP, req, rem));
 }
 
 ////
