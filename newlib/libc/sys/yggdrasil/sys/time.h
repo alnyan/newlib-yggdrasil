@@ -6,4 +6,5 @@ struct timeval;
 struct timezone;
 struct timespec;
 
+int nanosleep(const struct timespec *ts, struct timespec *res);
 int gettimeofday(struct timeval *tv, void *tz);

@@ -150,8 +150,8 @@ int _noopt getpid() {
 int _noopt kill(int pid, int sig) {
     return SET_ERRNO(int, ASM_SYSCALL2(SYSCALL_NR_KILL, pid, sig));
 }
-int _noopt waitpid(pid_t pid, int *status, int _0) {
-    return SET_ERRNO(int, ASM_SYSCALL2(SYSCALL_NRX_WAITPID, pid, status));
+int _noopt waitpid(pid_t pid, int *status, int flags) {
+    return SET_ERRNO(int, ASM_SYSCALL3(SYSCALL_NRX_WAITPID, pid, status, flags));
 }
 int _noopt gettimeofday(struct timeval *p, void *tz) {
     return SET_ERRNO(int, ASM_SYSCALL2(SYSCALL_NR_GETTIMEOFDAY, p, tz));
@@ -191,6 +191,10 @@ int _noopt umount(const char *dir) {
 }
 int _noopt nanosleep(const struct timespec *req, struct timespec *rem) {
     return SET_ERRNO(int, ASM_SYSCALL2(SYSCALL_NR_NANOSLEEP, req, rem));
+}
+
+int _noopt clone(int (*fn) (void *), void *stack, int flags, void *arg) {
+    return SET_ERRNO(int, ASM_SYSCALL4(SYSCALL_NR_CLONE, fn, stack, flags, arg));
 }
 
 ////
