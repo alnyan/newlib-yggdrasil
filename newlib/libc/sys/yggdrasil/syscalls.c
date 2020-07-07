@@ -193,9 +193,9 @@ int _noopt nanosleep(const struct timespec *req, struct timespec *rem) {
     return SET_ERRNO(int, ASM_SYSCALL2(SYSCALL_NR_NANOSLEEP, req, rem));
 }
 
-int _noopt clone(int (*fn) (void *), void *stack, int flags, void *arg) {
-    return SET_ERRNO(int, ASM_SYSCALL4(SYSCALL_NR_CLONE, fn, stack, flags, arg));
-}
+//int _noopt clone(int (*fn) (void *), void *stack, int flags, void *arg) {
+//    return SET_ERRNO(int, ASM_SYSCALL4(SYSCALL_NR_CLONE, fn, stack, flags, arg));
+//}
 
 ////
 
