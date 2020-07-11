@@ -1,4 +1,5 @@
 #pragma once
+#include <ygg/time.h>
 #include <sys/_timeval.h>
 #include <sys/_timespec.h>
 

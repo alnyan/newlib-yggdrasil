@@ -3,10 +3,16 @@
 #include <ygg/syscall.h>
 //#include "include/signal.h"
 #include <signal.h>
+#include <unistd.h>
 #include <stdio.h>
 
 #include "syscalls.h"
 #include "debug.h"
+
+extern void *malloc(size_t size);
+extern __attribute__((noreturn)) void exit(int code);
+extern int sigaltstack(const stack_t *ss, stack_t *old_ss);
+extern char *strsignal(int signum);
 
 static void __attribute__((optimize("O0"))) __kernel_sigentry(uintptr_t addr) {
     (void) ASM_SYSCALL1(SYSCALL_NRX_SIGENTRY, addr);
@@ -55,6 +61,18 @@ static void __libc_signal_handle(int signum) {
 }
 
 void __libc_signal_init(void) {
+#define SIGNAL_STACK_SIZE   4096
+    void *alt_stack = malloc(SIGNAL_STACK_SIZE);
+    if (!alt_stack) {
+        const char *msg = "Failed to allocate signal stack\n";
+        write(STDERR_FILENO, msg, sizeof(msg) - 1);
+        exit(-1);
+    }
+    stack_t ss = {
+        .ss_sp = alt_stack,
+        .ss_size = SIGNAL_STACK_SIZE
+    };
+
     for (size_t i = 0; i < 32; ++i) {
         signal_handlers[i] = __SIG_DFL;
     }
@@ -62,6 +80,8 @@ void __libc_signal_init(void) {
     signal_handlers[SIGUSR2] = __SIG_IGN;
 
     __kernel_sigentry((uintptr_t) __libc_signal_handle);
+    // Set main thread's signal stack
+    sigaltstack(&ss, NULL);
 }
 
 sighandler_t signal(int signum, sighandler_t new_handler) {

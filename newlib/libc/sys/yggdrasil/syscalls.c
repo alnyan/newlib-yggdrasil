@@ -9,6 +9,7 @@
 
 #include <ygg/termios.h>
 #include <ygg/syscall.h>
+#include <ygg/signum.h>
 
 #include "syscalls.h"
 
@@ -195,6 +196,10 @@ int _noopt nanosleep(const struct timespec *req, struct timespec *rem) {
 
 int _noopt clone(int (*fn) (void *), void *stack, int flags, void *arg) {
     return SET_ERRNO(int, ASM_SYSCALL4(SYSCALL_NR_CLONE, fn, stack, flags, arg));
+}
+
+int _noopt sigaltstack(const stack_t *ss, stack_t *old_ss) {
+    return SET_ERRNO(int, ASM_SYSCALL2(SYSCALL_NR_SIGALTSTACK, ss, old_ss));
 }
 
 ////
