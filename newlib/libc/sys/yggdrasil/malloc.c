@@ -49,10 +49,10 @@ static struct zone *zone_create(size_t size) {
     struct zone *zone = pages;
     struct block *head = pages + sizeof(struct zone);
 
-    zone->size = size;
+    zone->size = size - sizeof(struct zone);
     list_head_init(&zone->list);
 
-    head->size = size - sizeof(struct zone);
+    head->size = size - sizeof(struct zone) - sizeof(struct block);
     head->flags = BLOCK_MAGIC;
     head->prev = NULL;
     head->next = NULL;
@@ -64,7 +64,7 @@ static struct zone *zone_create(size_t size) {
 static void zone_destroy(struct zone *zone) {
     assert(!((uintptr_t) zone & 0xFFF));
     ygg_debug_trace("zone_destroy(ptr=%p, size=%u)\n", (uintptr_t) zone, zone->size);
-    munmap(zone, zone->size);
+    munmap(zone, zone->size + sizeof(struct zone));
 }
 
 ///
@@ -197,6 +197,7 @@ void *_malloc_r(struct _reent *ree, size_t size) {
         if (pages == MAP_FAILED) {
             return NULL;
         }
+        ygg_debug_trace("large_alloc(size=%u (%u)) = %p\n", size, pages_needed + 0x1000, pages);
 
         struct block *block = pages + 0x1000 - sizeof(struct block);
         block->flags = BLOCK_MAGIC | BLOCK_ALLOC | BLOCK_MMAP;
