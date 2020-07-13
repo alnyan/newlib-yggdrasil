@@ -8,3 +8,4 @@
 #define SIG_SETMASK     0
 
 typedef void (*_sig_func_ptr)(int);
+int kill(int pid, int signum);
