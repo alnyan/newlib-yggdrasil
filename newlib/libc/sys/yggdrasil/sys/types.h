@@ -4,7 +4,7 @@
 
 typedef struct __locale_t *locale_t;
 
-typedef struct fd_set *fd_set;
+typedef struct fd_set fd_set;
 
 typedef unsigned char u_char;
 typedef unsigned short u_short;

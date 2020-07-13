@@ -4,9 +4,17 @@
 typedef struct DIR_private DIR;
 struct dirent;
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 DIR *opendir(const char *path);
 int closedir(DIR *dirp);
 struct dirent *readdir(DIR *dirp);
+
+#if defined(__cplusplus)
+}
+#endif
 
 //DIR *opendir(const char *);
 //struct dirent *readdir(DIR *);
