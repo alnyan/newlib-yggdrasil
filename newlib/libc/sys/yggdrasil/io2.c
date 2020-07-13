@@ -9,6 +9,42 @@
 #include <ygg/syscall.h>
 #include "syscalls.h"
 
+//// Missing functions
+
+int fcntl(int fd, int cmd, ...) {
+    ygg_debug_trace("fcntl: not implemented\n");
+    errno = EINVAL;
+    return -1;
+}
+
+long sysconf(int name) {
+    switch (name) {
+    case _SC_ARG_MAX:
+        return 128;
+    case _SC_CLK_TCK:
+        return 1000000;
+    case _SC_OPEN_MAX:
+        return 32;
+    default:
+        ygg_debug_trace("sysconf: invalid request: %d\n", name);
+        while (1);
+        errno = EINVAL;
+        return -1;
+    }
+}
+
+mode_t umask(mode_t mask) {
+    ygg_debug_trace("umask: not implemented\n");
+    while (1);
+}
+
+int utime(const char *filename, const struct utimbuf *times) {
+    ygg_debug_trace("utime: not implemented\n");
+    return 0;
+}
+
+//////////////////////
+
 // TODO: move somewhere
 int usleep(unsigned long usec) {
     struct timespec req = {
