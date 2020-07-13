@@ -125,7 +125,7 @@ char *_noopt getcwd(char *buf, size_t lim) {
         return NULL;
     }
 }
-int _noopt isatty(int file) {
+int isatty(int file) {
     struct winsize ws;
     if (ioctl(file, TIOCGWINSZ, &ws) != 0) {
         return 0;
