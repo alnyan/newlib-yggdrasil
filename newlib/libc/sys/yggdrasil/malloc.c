@@ -279,6 +279,10 @@ void *_calloc_r(struct _reent *ree, size_t size, size_t nmemb) {
     return ptr;
 }
 
+void *calloc(size_t size, size_t nmemb) {
+    return _calloc_r(NULL, size, nmemb);
+}
+
 void *_realloc_r(struct _reent *ree, void *old, size_t size) {
     // TODO: maybe optimize this
     void *ptr = _malloc_r(ree, size);
